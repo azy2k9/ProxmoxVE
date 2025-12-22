@@ -15,26 +15,13 @@ network_check
 update_os
 
 msg_info "Installing Dependencies (Patience)"
-
-# 1. Force apt to use compatible settings to stop the 400 Bad Request errors
-echo "Acquire::http::Pipeline-Depth \"0\";" > /etc/apt/apt.conf.d/99nopipeline
-echo "Acquire::http::No-Cache \"true\";" > /etc/apt/apt.conf.d/99nocache
-
-# 2. Clean and force a fresh update
-$STD apt-get clean
+# echo "Acquire::http::Pipeline-Depth \"0\";" > /etc/apt/apt.conf.d/99nopipeline
+# echo "Acquire::http::No-Cache \"true\";" > /etc/apt/apt.conf.d/99nocache
+# $STD apt-get clean
 $STD apt-get update
-
-# 3. Install in smaller batches to isolate failures
-msg_info "Installing Multimedia Dependencies"
-$STD apt-get install -y {libgtk-3-dev,libavcodec-dev,libavformat-dev,libswscale-dev,libv4l-dev,libxvidcore-dev,libx264-dev,libjpeg-dev,libpng-dev,libtiff-dev}
-
-msg_info "Installing Build Tools"
-$STD apt-get install -y {jq,wget,xz-utils,python3,python3-dev,python3-distutils,gcc,pkg-config,libhdf5-dev,unzip,build-essential,automake,libtool,ccache,libusb-1.0-0-dev,apt-transport-https,python3.11,python3.11-dev,cmake,git}
-
-msg_info "Installing Math & System Libraries"
-$STD apt-get install -y {gfortran,openexr,libatlas-base-dev,libssl-dev,libtbbmalloc2,libtbb-dev,libdc1394-dev,libopenexr-dev,libgstreamer-plugins-base1.0-dev,libgstreamer1.0-dev,tclsh,libopenblas-dev,liblapack-dev,make,moreutils}
-
+$STD apt-get install -y {jq,wget,xz-utils,python3,python3-dev,python3-distutils,gcc,pkg-config,libhdf5-dev,unzip,build-essential,automake,libtool,ccache,libusb-1.0-0-dev,apt-transport-https,python3.11,python3.11-dev,cmake,git,libgtk-3-dev,libavcodec-dev,libavformat-dev,libswscale-dev,libv4l-dev,libxvidcore-dev,libx264-dev,libjpeg-dev,libpng-dev,libtiff-dev,gfortran,openexr,libatlas-base-dev,libssl-dev,libtbbmalloc2,libtbb-dev,libdc1394-dev,libopenexr-dev,libgstreamer-plugins-base1.0-dev,libgstreamer1.0-dev,tclsh,libopenblas-dev,liblapack-dev,make,moreutils}
 msg_ok "Installed Dependencies"
+
 
 msg_info "Setting Up Hardware Acceleration"
 $STD apt-get -y install {va-driver-all,ocl-icd-libopencl1,intel-opencl-icd,vainfo,intel-gpu-tools}
