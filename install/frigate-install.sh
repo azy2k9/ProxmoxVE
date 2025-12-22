@@ -15,7 +15,7 @@ network_check
 update_os
 
 msg_info "Installing Dependencies (Patience)"
-# echo "Acquire::http::Pipeline-Depth \"0\";" > /etc/apt/apt.conf.d/99nopipeline
+echo "Acquire::http::Pipeline-Depth \"0\";" > /etc/apt/apt.conf.d/99nopipeline
 # echo "Acquire::http::No-Cache \"true\";" > /etc/apt/apt.conf.d/99nocache
 # $STD apt-get clean
 $STD apt-get update
