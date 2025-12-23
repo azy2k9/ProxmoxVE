@@ -87,9 +87,9 @@ if [[ "${SHARED_MOUNT}" == "yes" ]]; then
   else
     pct exec $CTID -- /bin/bash -c "adduser $SHARE_USER --disabled-password --no-create-home --gecos '' --uid 1001 &>/dev/null"
     # Add mount point and user mapping
-    # This assumes that we have a "share" drive mounted on host with directory 'public' (/mnt/pve/share/public) AND that $SHARE_USER user (and group) has been added on host with appropriate access to the "public" directory
+    # This assumes that we have a "cctv" drive mounted on host with directory 'cctv' (/mnt/pve/cctv) AND that $SHARE_USER user (and group) has been added on host with appropriate access to the "cctv" directory
     cat <<EOF >>/etc/pve/lxc/${CTID}.conf
-mp0: /mnt/pve/share2/public,mp=/mnt/pve/share
+mp0: /mnt/pve/cctv,mp=/media/frigate
 lxc.idmap: u 0 100000 1001
 lxc.idmap: g 0 100000 1001
 lxc.idmap: u 1001 1001 1
