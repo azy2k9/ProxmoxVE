@@ -83,13 +83,17 @@ if [[ "${SHARED_MOUNT}" == "yes" ]]; then
   msg_info "Mounting shared directory"
   #Add user $SHARE_USER
   if user_exists "$SHARE_USER"; then
-    msg_error 'User $SHARE_USER already exists.'
+    msg_error "User $SHARE_USER already exists."
   else
     pct exec $CTID -- /bin/bash -c "adduser $SHARE_USER --disabled-password --no-create-home --gecos '' --uid 1001 &>/dev/null"
-    # Add mount point and user mapping
-    # This assumes that we have a "cctv" drive mounted on host with directory 'cctv' (/mnt/pve/cctv) AND that $SHARE_USER user (and group) has been added on host with appropriate access to the "cctv" directory
-    cat <<EOF >>/etc/pve/lxc/${CTID}.conf
-mp0: /mnt/pve/cctv,mp=/media/frigate
+    
+    # Add mount point (Shared for both privileged and unprivileged)
+    echo "mp0: /mnt/pve/cctv,mp=/media/frigate" >> /etc/pve/lxc/${CTID}.conf
+    
+    # Check if container is UNPRIVILEGED (only unprivileged needs ID mapping)
+    if grep -q "unprivileged: 1" /etc/pve/lxc/${CTID}.conf; then
+      msg_info "Container is unprivileged, adding ID mappings"
+      cat <<EOF >>/etc/pve/lxc/${CTID}.conf
 lxc.idmap: u 0 100000 1001
 lxc.idmap: g 0 100000 1001
 lxc.idmap: u 1001 1001 1
@@ -97,6 +101,9 @@ lxc.idmap: g 1001 1001 1
 lxc.idmap: u 1002 101002 64534
 lxc.idmap: g 1002 101002 64534
 EOF
+    else
+      msg_ok "Container is privileged, skipping ID mappings (not required)"
+    fi
   fi
   msg_ok "Mounted shared directory"
 
