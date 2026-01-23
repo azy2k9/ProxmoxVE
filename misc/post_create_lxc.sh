@@ -88,10 +88,10 @@ if [[ "${SHARED_MOUNT}" == "yes" ]]; then
     pct exec $CTID -- /bin/bash -c "adduser $SHARE_USER --disabled-password --no-create-home --gecos '' --uid 1001 &>/dev/null"
     
     # Add mount point - pct set will create the ZFS subvolume automatically
-    pvesm alloc cctv $CTID subvol-${CTID}-disk-1 6000G
+    pct set $CTID -mp0 cctv:6000,mp=/media/frigate
 
     # Add mount point (Shared for both privileged and unprivileged)
-    echo "mp0: cctv:subvol-${CTID}-disk-1,mp=/media/frigate,size=6000G" >> /etc/pve/lxc/${CTID}.conf
+    echo "mp0: cctv:subvol-${CTID}-disk-0,mp=/media/frigate,size=6000G" >> /etc/pve/lxc/${CTID}.conf
     
     # old way for proxmox directory
     # echo "mp0: /mnt/pve/cctv,mp=/media/frigate" >> /etc/pve/lxc/${CTID}.conf
