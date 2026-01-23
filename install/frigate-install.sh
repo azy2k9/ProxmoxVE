@@ -302,7 +302,10 @@ cameras:
   side:
     ffmpeg:
       inputs:
-        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
+        - path: rtsp://192.168.68.61:35323/dba7a13023100ee7
+          roles:
+            - record
+        - path: rtsp://192.168.68.61:35323/ef43633f1ad1ce3a
           roles:
             - detect
     record:
@@ -321,6 +324,30 @@ cameras:
     review:
       alerts: {}
   garage:
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.68.61:37007/354206d1cbb8d58f
+          roles:
+            - record
+        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
+          roles:
+            - detect
+    record:
+      enabled: true
+    detect:
+      height: 720
+      width: 1280
+      fps: 6
+    motion:
+      mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
+    zones:
+      Garage_door_area:
+        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
+        inertia: 3
+        loitering_time: 0
+    review:
+      alerts: {}
+
     ffmpeg:
       inputs:
         - path: rtsp://192.168.68.61:37007/354206d1cbb8d58f
