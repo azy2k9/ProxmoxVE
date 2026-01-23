@@ -231,7 +231,7 @@ base_settings() {
   FW=${var_fw:-"1"}
   TAGS="remz1337;${var_tags:-}"
   ADD_SSH_USER=${var_add_ssh_user:-"no"}
-  SHARED_MOUNT=${var_shared_mount:-"no"}
+  SHARED_MOUNT=${var_shared_mount:-"yes"}
   POSTFIX_SAT=${var_postfix_sat:-"no"}
   NVIDIA_PASSTHROUGH=${var_nvidia_passthrough:-"no"}
 
