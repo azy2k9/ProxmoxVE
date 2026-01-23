@@ -85,6 +85,8 @@ if [[ "${SHARED_MOUNT}" == "yes" ]]; then
   if user_exists "$SHARE_USER"; then
     msg_error "User $SHARE_USER already exists."
   else
+    echo "Arslaan testing script..." 
+
     pct exec $CTID -- /bin/bash -c "adduser $SHARE_USER --disabled-password --no-create-home --gecos '' --uid 1001 &>/dev/null"
     
     # Add mount point - pct set will create the ZFS subvolume automatically
