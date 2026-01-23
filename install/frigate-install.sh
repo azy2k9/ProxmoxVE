@@ -147,10 +147,10 @@ NODE_VERSION="22" NODE_MODULE="yarn" setup_nodejs
 msg_ok "Installed NodeJS"
 
 # This should be moved to conditional block, only needed if Coral TPU is detected
-msg_info "Downloading Coral TPU Model"
-cd /
-wget -qO edgetpu_model.tflite https://github.com/google-coral/test_data/raw/release-frogfish/ssdlite_mobiledet_coco_qat_postprocess_edgetpu.tflite
-msg_ok "Downloaded Coral TPU Model"
+# msg_info "Downloading Coral TPU Model"
+# cd /
+# wget -qO edgetpu_model.tflite https://github.com/google-coral/test_data/raw/release-frogfish/ssdlite_mobiledet_coco_qat_postprocess_edgetpu.tflite
+# msg_ok "Downloaded Coral TPU Model"
 
 msg_info "Downloading CPU Model"
 mkdir -p /models
@@ -200,42 +200,42 @@ sed -i 's/truck/car/g' /openvino-model/coco_91cl_bkgr.txt
 msg_ok "Downloaded OpenVino Model"
 
 # Optional model to test
-msg_info "Building D-FINE Model"
-cd /
-$STD git clone https://github.com/Peterande/D-FINE
-cd /D-FINE
-$STD pip3 install -r requirements.txt
-$STD pip3 install onnxsim onnxscript
-mkdir -p models
-cd models
-wget -q https://github.com/Peterande/storage/releases/download/dfinev1.0/dfine_n_coco.pth
-sed -i 's|data = torch.rand(32, 3, 640, 640)|data = torch.rand(1, 3, 640, 640)|g' /D-FINE/tools/deployment/export_onnx.py
-sed -i 's|dynamic_axes=dynamic_axes|dynamo=True|g' /D-FINE/tools/deployment/export_onnx.py
-sed -i 's|opset_version=[[:digit:]]\+|opset_version=18|g' /D-FINE/tools/deployment/export_onnx.py
-sed -i 's|640, 640|320, 320|g' /D-FINE/configs/dfine/include/dfine_hgnetv2.yml
-sed -i 's|640, 640|320, 320|g' /D-FINE/tools/deployment/export_onnx.py
-sed -i 's|load_state_dict(state)|load_state_dict(new_checkpoint, strict=False)|g' /D-FINE/tools/deployment/export_onnx.py
-sed -i '/state = checkpoint\["model"\]/a \
-\
-        # We remove the anchors and valid_mask saved parameters here\
-        new_checkpoint = {}\
-        for k in state:\
-          if "anchors" in k or "valid_mask" in k:\
-            print(k)\
-            continue\
-          new_checkpoint[k] = state[k]' /D-FINE/tools/deployment/export_onnx.py
-set +e
-######## This line is throwing a segfault but still converting the model successfully...
-$STD python3 /D-FINE/tools/deployment/export_onnx.py -c /D-FINE/configs/dfine/dfine_hgnetv2_n_coco.yml -r /D-FINE/models/dfine_n_coco.pth
-set -e
-msg_ok "Built D-FINE Model"
+# msg_info "Building D-FINE Model"
+# cd /
+# $STD git clone https://github.com/Peterande/D-FINE
+# cd /D-FINE
+# $STD pip3 install -r requirements.txt
+# $STD pip3 install onnxsim onnxscript
+# mkdir -p models
+# cd models
+# wget -q https://github.com/Peterande/storage/releases/download/dfinev1.0/dfine_n_coco.pth
+# sed -i 's|data = torch.rand(32, 3, 640, 640)|data = torch.rand(1, 3, 640, 640)|g' /D-FINE/tools/deployment/export_onnx.py
+# sed -i 's|dynamic_axes=dynamic_axes|dynamo=True|g' /D-FINE/tools/deployment/export_onnx.py
+# sed -i 's|opset_version=[[:digit:]]\+|opset_version=18|g' /D-FINE/tools/deployment/export_onnx.py
+# sed -i 's|640, 640|320, 320|g' /D-FINE/configs/dfine/include/dfine_hgnetv2.yml
+# sed -i 's|640, 640|320, 320|g' /D-FINE/tools/deployment/export_onnx.py
+# sed -i 's|load_state_dict(state)|load_state_dict(new_checkpoint, strict=False)|g' /D-FINE/tools/deployment/export_onnx.py
+# sed -i '/state = checkpoint\["model"\]/a \
+# \
+#         # We remove the anchors and valid_mask saved parameters here\
+#         new_checkpoint = {}\
+#         for k in state:\
+#           if "anchors" in k or "valid_mask" in k:\
+#             print(k)\
+#             continue\
+#           new_checkpoint[k] = state[k]' /D-FINE/tools/deployment/export_onnx.py
+# set +e
+# ######## This line is throwing a segfault but still converting the model successfully...
+# $STD python3 /D-FINE/tools/deployment/export_onnx.py -c /D-FINE/configs/dfine/dfine_hgnetv2_n_coco.yml -r /D-FINE/models/dfine_n_coco.pth
+# set -e
+# msg_ok "Built D-FINE Model"
 
 # Optional model to test
-msg_info "Downloading YoloX Model"
-mkdir -p /models
-cd /models
-wget -qO yolox_tiny.onnx https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx
-msg_ok "Downloaded YoloX Model"
+# msg_info "Downloading YoloX Model"
+# mkdir -p /models
+# cd /models
+# wget -qO yolox_tiny.onnx https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx
+# msg_ok "Downloaded YoloX Model"
 
 msg_info "Installing Frigate"
 cd /opt/frigate
