@@ -250,34 +250,100 @@ cd /opt/frigate/
 sed -i '/^s6-svc -O \.$/s/^/#/' /opt/frigate/docker/main/rootfs/etc/s6-overlay/s6-rc.d/frigate/run
 cp -r /opt/frigate/config/. /config
 mkdir -p /media/frigate
-curl -fsSL "https://github.com/intel-iot-devkit/sample-videos/raw/master/person-bicycle-car-detection.mp4" -o "/media/frigate/person-bicycle-car-detection.mp4"
-echo "tmpfs   /tmp/cache      tmpfs   defaults        0       0" >>/etc/fstab
+# curl -fsSL "https://github.com/intel-iot-devkit/sample-videos/raw/master/person-bicycle-car-detection.mp4" -o "/media/frigate/person-bicycle-car-detection.mp4"
+# echo "tmpfs   /tmp/cache      tmpfs   defaults        0       0" >>/etc/fstab
 cat <<EOF >/etc/frigate.env
 DEFAULT_FFMPEG_VERSION="7.0"
 INCLUDED_FFMPEG_VERSIONS="7.0:5.0"
 EOF
 cat <<EOF >/config/config.yml
+version: 0.16-0
+
 mqtt:
   enabled: false
+
+go2rtc:
+  streams:
+    side: rtsp://192.168.68.61:35323/dba7a13023100ee7
+    garage: rtsp://192.168.68.61:37007/354206d1cbb8d58f
+
+ffmpeg:
+  hwaccel_args: preset-vaapi
+  output_args:
+    record: preset-record-generic-audio-aac
+
+detectors:
+  detector01:
+    type: openvino
+
+model:
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+
+record:
+  enabled: true
+  retain:
+    days: 14
+    mode: all
+  alerts:
+    retain:
+      days: 30
+      mode: motion
+  detections:
+    retain:
+      days: 30
+      mode: motion
+
 cameras:
-  test:
+  side:
     ffmpeg:
       inputs:
-        - path: /media/frigate/person-bicycle-car-detection.mp4
-          input_args: -re -stream_loop -1 -fflags +genpts
+        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
           roles:
             - detect
-            - rtmp
+    record:
+      enabled: true
     detect:
-      height: 1080
-      width: 1920
-      fps: 5
-# Optional: Authentication configuration
-auth:
-  # Optional: Enable authentication
-  enabled: false
-detect:
-  enabled: false
+      height: 720
+      width: 1280
+      fps: 6
+    motion:
+      mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
+    zones:
+      Garage_door_area:
+        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
+        inertia: 3
+        loitering_time: 0
+    review:
+      alerts: {}
+  garage:
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.68.61:37007/354206d1cbb8d58f
+          roles:
+            - record
+        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
+          roles:
+            - detect
+    record:
+      enabled: true
+    detect:
+      height: 720
+      width: 1280
+      fps: 6
+    motion:
+      mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
+    zones:
+      Garage_door_area:
+        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
+        inertia: 3
+        loitering_time: 0
+    review:
+      alerts: {}
 EOF
 msg_ok "Installed Frigate"
 
@@ -360,49 +426,49 @@ EOF
   export YOLO_MODELS="yolov7-tiny-416"
   export TRT_VER="$TRT_VER"
   $STD bash /opt/frigate/docker/tensorrt/detector/rootfs/etc/s6-overlay/s6-rc.d/trt-model-prepare/run
-  cat <<EOF >>/config/config.yml
-ffmpeg:
-  hwaccel_args: preset-nvidia
-#  output_args:
-#    record: preset-record-generic-audio-aac
-detectors:
-  detector01:
-    type: tensorrt
-#    device: 0
-model:
-  path: /config/model_cache/tensorrt/yolov7-tiny-416.trt
-  input_tensor: nchw
-  input_pixel_format: rgb
-  width: 416
-  height: 416
+#   cat <<EOF >>/config/config.yml
+# ffmpeg:
+#   hwaccel_args: preset-nvidia
+# #  output_args:
+# #    record: preset-record-generic-audio-aac
+# detectors:
+#   detector01:
+#     type: tensorrt
+# #    device: 0
+# model:
+#   path: /config/model_cache/tensorrt/yolov7-tiny-416.trt
+#   input_tensor: nchw
+#   input_pixel_format: rgb
+#   width: 416
+#   height: 416
 EOF
   msg_ok "Installed TensorRT Object Detection Model"
 elif grep -q -o -m1 -E 'avx[^ ]* | sse4_2' /proc/cpuinfo; then
   msg_ok "AVX or SSE 4.2 Support Detected"
   msg_info "Configuring Openvino Object Detection Model"
-  cat <<EOF >>/config/config.yml
-ffmpeg:
-  hwaccel_args: auto
-detectors:
-  detector01:
-    type: openvino
-model:
-  width: 300
-  height: 300
-  input_tensor: nhwc
-  input_pixel_format: bgr
-  path: /openvino-model/ssdlite_mobilenet_v2.xml
-  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
-EOF
+#   cat <<EOF >>/config/config.yml
+# ffmpeg:
+#   hwaccel_args: auto
+# detectors:
+#   detector01:
+#     type: openvino
+# model:
+#   width: 300
+#   height: 300
+#   input_tensor: nhwc
+#   input_pixel_format: bgr
+#   path: /openvino-model/ssdlite_mobilenet_v2.xml
+#   labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+# EOF
   msg_ok "Configured Openvino Object Detection Model"
 else
   msg_info "Configuring CPU Object Detection Model"
-  cat <<EOF >>/config/config.yml
-ffmpeg:
-  hwaccel_args: auto
-model:
-  path: /cpu_model.tflite
-EOF
+#   cat <<EOF >>/config/config.yml
+# ffmpeg:
+#   hwaccel_args: auto
+# model:
+#   path: /cpu_model.tflite
+# EOF
   msg_ok "Configured CPU Object Detection Model"
 fi
 
