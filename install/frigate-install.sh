@@ -257,18 +257,27 @@ DEFAULT_FFMPEG_VERSION="7.0"
 INCLUDED_FFMPEG_VERSIONS="7.0:5.0"
 EOF
 cat <<EOF >/config/config.yml
-version: 0.16-0
-
 mqtt:
   enabled: false
 
+telemetry:
+  stats:
+    intel_gpu_device: ''
+    # intel_gpu_device: "sriov"
+    # intel_gpu_device: "drm:/dev/dri/card1"
+
 go2rtc:
   streams:
+    living_room: rtsp://192.168.68.61:42967/30ad76fed693f95d
+    driveway: rtsp://192.168.68.61:33885/04df7fc31d411588
     side: rtsp://192.168.68.61:35323/dba7a13023100ee7
     garage: rtsp://192.168.68.61:37007/354206d1cbb8d58f
+    back_garden: rtsp://192.168.68.61:39803/6295bc9a3fd77375
+    garden_entrace: rtsp://192.168.68.61:44315/5db2af6ca784f2ba
 
 ffmpeg:
   hwaccel_args: preset-vaapi
+  # hwaccel_args: preset-intel-qsv-h264
   output_args:
     record: preset-record-generic-audio-aac
 
@@ -287,7 +296,7 @@ model:
 record:
   enabled: true
   retain:
-    days: 14
+    days: 30
     mode: all
   alerts:
     retain:
@@ -298,29 +307,51 @@ record:
       days: 30
       mode: motion
 
+detect:
+  enabled: true
+  height: 720
+  width: 1280
+  fps: 6
+
+snapshots:
+  enabled: true
+
 cameras:
+  driveway:
+    onvif:
+      host: 192.168.68.64
+      port: 80
+      user: admin
+      password: Afiyah786
+      autotracking:
+        enabled: true
+        zooming: disabled
+        required_zones:
+          - home
+        return_preset: home
+        timeout: 5
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.68.61:33885/04df7fc31d411588
+          roles:
+            - detect
+    motion:
+      mask:
+        - 0,0,0.385,0,1,0,1,0.123,1,0.382,0.717,0.3,0.718,0.245,0.678,0.203,0.679,0.161,0.534,0.124,0.423,0.1,0.336,0.11,0.23,0.123,0.137,0.141,0.058,0.229,0,0.274,0,0
+        - 0.083,0.652,0.098,0.683,0.123,0.668,0.133,0.645,0.156,0.638,0.171,0.614,0.198,0.629,0.25,0.61,0.309,0.578,0.249,0.713,0.219,0.765,0.183,0.84,0.116,1,0,1,0,0.893,0,0.769,0,0.722,0.024,0.712,0.01,0.666,0.02,0.625
+    zones:
+      home:
+        coordinates: 0.31,0.582,0.316,0.679,0.376,0.642,0.573,0.538,0.583,0.529,0.614,0.533,0.698,0.569,0.748,0.586,0.758,0.428,0.978,0.488,1,0.642,1,1,0.245,1,0.123,1,0.189,0.836,0.25,0.72
+        loitering_time: 0
   side:
     ffmpeg:
       inputs:
         - path: rtsp://192.168.68.61:35323/dba7a13023100ee7
           roles:
-            - record
-        - path: rtsp://192.168.68.61:35323/ef43633f1ad1ce3a
-          roles:
             - detect
-    record:
-      enabled: true
-    detect:
-      height: 720
-      width: 1280
-      fps: 6
     motion:
-      mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
-    zones:
-      Garage_door_area:
-        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
-        inertia: 3
-        loitering_time: 0
+      mask: 0.389,0,0.375,0.901,0.344,1,0,1,0,0,0.39,0
+    zones: {}
     review:
       alerts: {}
   garage:
@@ -328,49 +359,41 @@ cameras:
       inputs:
         - path: rtsp://192.168.68.61:37007/354206d1cbb8d58f
           roles:
-            - record
-        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
-          roles:
             - detect
-    record:
-      enabled: true
-    detect:
-      height: 720
-      width: 1280
-      fps: 6
     motion:
       mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
-    zones:
-      Garage_door_area:
-        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
-        inertia: 3
-        loitering_time: 0
+    zones: {}
     review:
       alerts: {}
-
+  living_room:
+    detect:
+      enabled: false
     ffmpeg:
       inputs:
-        - path: rtsp://192.168.68.61:37007/354206d1cbb8d58f
+        - path: rtsp://192.168.68.61:42967/30ad76fed693f95d
           roles:
             - record
-        - path: rtsp://192.168.68.61:37007/d1cf57756b588979
+  back_garden:
+    detect:
+      enabled: false
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.68.61:39803/986b3b18dd44d45d
           roles:
             - detect
-    record:
-      enabled: true
-    detect:
-      height: 720
-      width: 1280
-      fps: 6
-    motion:
-      mask: 0.58,0,0.593,0.068,0.575,0.447,0.571,0.508,0.577,1,0.622,1,1,1,1,0,0.582,0
-    zones:
-      Garage_door_area:
-        coordinates: 0.332,0.082,0.327,0.508,0.571,0.553,0.593,0.082,0.463,0.074
-        inertia: 3
-        loitering_time: 0
+    zones: {}
     review:
       alerts: {}
+  garden_entrace:
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.68.61:44315/939a515ae97f1987
+          roles:
+            - detect
+    zones: {}
+    review:
+      alerts: {}
+version: 0.16.3
 EOF
 msg_ok "Installed Frigate"
 
