@@ -169,18 +169,18 @@ cp /opt/frigate/audio-labelmap.txt /audio-labelmap.txt
 msg_ok "Built Audio Models"
 
 # This should be moved to conditional block, only needed if Hailo AI module is detected
-msg_info "Building HailoRT"
-$STD bash /opt/frigate/docker/main/install_hailort.sh
-cp -a /opt/frigate/docker/main/rootfs/. /
-sed -i '/^.*unset DEBIAN_FRONTEND.*$/d' /opt/frigate/docker/main/install_deps.sh
-echo "libedgetpu1-max libedgetpu/accepted-eula boolean true" | debconf-set-selections
-echo "libedgetpu1-max libedgetpu/install-confirm-max boolean true" | debconf-set-selections
-$STD bash /opt/frigate/docker/main/install_deps.sh
-$STD pip3 install -U /wheels/*.whl
-ldconfig
-#Run twice to fix dependency conflict
-$STD pip3 install -U /wheels/*.whl
-msg_ok "Built HailoRT"
+# msg_info "Building HailoRT"
+# $STD bash /opt/frigate/docker/main/install_hailort.sh
+# cp -a /opt/frigate/docker/main/rootfs/. /
+# sed -i '/^.*unset DEBIAN_FRONTEND.*$/d' /opt/frigate/docker/main/install_deps.sh
+# echo "libedgetpu1-max libedgetpu/accepted-eula boolean true" | debconf-set-selections
+# echo "libedgetpu1-max libedgetpu/install-confirm-max boolean true" | debconf-set-selections
+# $STD bash /opt/frigate/docker/main/install_deps.sh
+# $STD pip3 install -U /wheels/*.whl
+# ldconfig
+# #Run twice to fix dependency conflict
+# $STD pip3 install -U /wheels/*.whl
+# msg_ok "Built HailoRT"
 
 msg_info "Installing OpenVino Runtime and Dev library"
 $STD pip3 install -r /opt/frigate/docker/main/requirements-ov.txt
