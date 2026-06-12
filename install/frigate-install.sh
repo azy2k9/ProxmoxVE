@@ -63,13 +63,13 @@ msg_ok "Setup environment"
 
 msg_info "Downloading Frigate source"
 fetch_and_deploy_gh_release "frigate" "blakeblackshear/frigate" "tarball" "v0.16.3" "/opt/frigate"
-# cd ~
-# RELEASE=$(curl -s https://api.github.com/repos/blakeblackshear/frigate/releases/latest | jq -r '.tag_name')
-# mkdir -p /opt/frigate/models
-# curl -fsSL "https://github.com/blakeblackshear/frigate/archive/refs/tags/${RELEASE}.tar.gz" -o "frigate.tar.gz"
-# $STD tar -xzf frigate.tar.gz -C /opt/frigate --strip-components 1
-# rm -rf frigate.tar.gz
-# cd /opt/frigate
+cd ~
+# RELEASE=$(curl -s https://api.github.com/repos/blakeblackshear/frigate/releases/tags/v0.16.3| jq -r '.tag_name')
+mkdir -p /opt/frigate/models
+curl -fsSL "https://github.com/blakeblackshear/frigate/archive/refs/tags/v0.16.3.tar.gz" -o "frigate.tar.gz"
+$STD tar -xzf frigate.tar.gz -C /opt/frigate --strip-components 1
+rm -rf frigate.tar.gz
+cd /opt/frigate
 msg_ok "Downloaded Frigate source"
 
 msg_info "Building Nginx with Custom Modules"
@@ -87,11 +87,11 @@ msg_ok "Built SQLite"
 
 msg_info "Installing go2rtc"
 fetch_and_deploy_gh_release "go2rtc" "AlexxIT/go2rtc" "singlefile" "latest" "/usr/local/go2rtc/bin" "go2rtc_linux_amd64"
-# mkdir -p /usr/local/go2rtc/bin
-# cd /usr/local/go2rtc/bin
-# curl -fsSL "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_amd64" -o "go2rtc"
-# chmod +x go2rtc
-# ln -sf /usr/local/go2rtc/bin/go2rtc /usr/local/bin/go2rtc
+mkdir -p /usr/local/go2rtc/bin
+cd /usr/local/go2rtc/bin
+curl -fsSL "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_amd64" -o "go2rtc"
+chmod +x go2rtc
+ln -sf /usr/local/go2rtc/bin/go2rtc /usr/local/bin/go2rtc
 msg_ok "Installed go2rtc"
 
 msg_info "Installing Tempio"
