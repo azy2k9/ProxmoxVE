@@ -224,8 +224,8 @@ base_settings() {
   SSH_AUTHORIZED_KEY=${var_ssh_authorized_key:-""}
   UDHCPC_FIX=${var_udhcpc_fix:-""}
   TAGS="community-script;${var_tags:-}"
-  ENABLE_FUSE=${var_fuse:-"${1:-yes}"}
-  ENABLE_TUN=${var_tun:-"${1:-yes}"}
+  ENABLE_FUSE=${var_fuse:-"${1:-no}"}
+  ENABLE_TUN=${var_tun:-"${1:-no}"}
   
   #Custom variables for remz1337's fork
   FW=${var_fw:-"1"}

@@ -14,6 +14,8 @@ var_os="${var_os:-debian}"
 var_version="${var_version:-12}"
 var_unprivileged="${var_unprivileged:-0}"
 var_nvidia_passthrough="${var_nvidia_passthrough:-no}"
+var_fuse="${var_fuse:-yes}"
+var_tun="${var_tun:-yes}"
 
 header_info "$APP"
 variables
