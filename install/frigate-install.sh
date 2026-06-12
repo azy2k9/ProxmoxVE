@@ -62,7 +62,7 @@ export HAILORT_LOGGER_PATH=NONE
 msg_ok "Setup environment"
 
 msg_info "Downloading Frigate source"
-fetch_and_deploy_gh_release "frigate" "blakeblackshear/frigate" "tarball" "latest" "/opt/frigate"
+fetch_and_deploy_gh_release "frigate" "blakeblackshear/frigate" "tarball" "16.3" "/opt/frigate"
 # cd ~
 # RELEASE=$(curl -s https://api.github.com/repos/blakeblackshear/frigate/releases/latest | jq -r '.tag_name')
 # mkdir -p /opt/frigate/models
